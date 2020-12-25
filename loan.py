@@ -27,6 +27,7 @@ def calculate():
             if data[i - 1]['balance'] < 0 or data[i - 1]['balance'] < 1:
                 data[i - 1]['balance'] = 0
     print(tabulate(data, headers='keys', tablefmt='grid'))
+    #test commit
 
 
 # create windows object
