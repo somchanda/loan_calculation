@@ -1,15 +1,20 @@
 from tkinter import *
-from tabulate import tabulate
+from tkinter import messagebox
+from tkinter.ttk import Treeview, Scrollbar, Style
 
 
 def calculate():
-    loan = float(loan_text.get())
-    rate = float(rate_text.get())
-    duration = int(duration_text.get())
-    # To calculate interest
-    interest = loan * rate / 100
-    repayment = loan / duration
-    repayment = round(repayment, 2)
+    try:
+        loan = float(loan_text.get())
+        rate = float(rate_text.get())
+        duration = int(duration_text.get())
+        # To calculate interest
+        interest = loan * rate / 100
+        repayment = loan / duration
+        repayment = round(repayment, 2)
+    except Exception as ex:
+        messagebox.showerror("Error", "Please enter valid data!")
+        return
 
     data = list()
 
@@ -26,8 +31,39 @@ def calculate():
             data[i - 1]['balance'] = round(data[i - 1]['loan'] - data[i - 1]['repayment'], 2)
             if data[i - 1]['balance'] < 0 or data[i - 1]['balance'] < 1:
                 data[i - 1]['balance'] = 0
-    print(tabulate(data, headers='keys', tablefmt='grid'))
-    #test commit
+    # print(tabulate(data, headers='keys', tablefmt='grid'))
+
+    treeView = Treeview(app, selectmode='browse')
+    treeView.grid(row=4, column=0, sticky='NSEW', columnspan=3)
+    verscrlbar = Scrollbar(app, orient='vertical', command=treeView.yview)
+    verscrlbar.grid(row=4, column=3, sticky='ns')
+    treeView.configure(yscrollcommand=verscrlbar.set)
+    treeView['columns'] = ('1', '2', '3', '4', '5', '6')
+    treeView['show'] = 'headings'
+
+    style = Style()
+    style.configure("Treeview.Heading", font=('Khmer OS Bokor', 10), foreground='blue')
+
+    treeView.column("1", width=90, anchor='c')
+    treeView.column("2", width=90, anchor='se')
+    treeView.column("3", width=90, anchor='se')
+    treeView.column("4", width=90, anchor='se')
+    treeView.column("5", width=90, anchor='se')
+    treeView.column("6", width=90, anchor='se')
+
+    treeView.heading("1", text="ខែទី")
+    treeView.heading("2", text="ប្រាក់ដើម")
+    treeView.heading("3", text="ការប្រាក់ត្រូវបង់")
+    treeView.heading("4", text="ប្រាក់ដើមរំលស់")
+    treeView.heading("5", text="ប្រាក់ត្រូវបង់")
+    treeView.heading("6", text="សមតុល្យ")
+    fm = "${:,.2f}"
+    i = 1
+    for row in data:
+        treeView.insert("", 'end', text="L" + str(i), values=(
+        row['Period'], fm.format(row['loan']), fm.format(row['interest']), fm.format(row['repayment']),
+        fm.format(row['totalRepayment']), fm.format(row['balance'])))
+        i = i + 1
 
 
 # create windows object
