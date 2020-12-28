@@ -13,6 +13,7 @@ def calculate():
         repayment = loan / duration
         repayment = round(repayment, 2)
     except Exception as ex:
+        print(ex)
         messagebox.showerror("Error", "Please enter valid data!")
         return
 
